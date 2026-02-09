@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: daily-history-server
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    defer-datasource-initialization: true
