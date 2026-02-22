@@ -21,6 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -72,7 +73,14 @@ public class GoogleAuthService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        return new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), userDetails.getEmail(), roles);
+        return new JwtResponse(
+                jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                userDetails.getAvatarUrl(),
+                roles
+        );
     }
 
     private GoogleIdToken verifyToken(String idTokenString) {
@@ -99,7 +107,9 @@ public class GoogleAuthService {
         user.setProviderUserId(sub);
         Role userRole = roleRepository.findByName(ERole.USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-        user.setRoles(Set.of(userRole));
+        Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
+        user.setRoles(roles);
         return userRepository.save(user);
     }
 

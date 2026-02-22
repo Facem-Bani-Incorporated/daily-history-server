@@ -9,6 +9,7 @@ spring:
     defer-datasource-initialization: true
 
 server:
+  port: ${PORT:8080}
   jwtSecret: ${SERVER_JWTSECRET}
   jwtExpirationMs: ${SERVER_JWTEXPIRATIONMS:86400000}
 
