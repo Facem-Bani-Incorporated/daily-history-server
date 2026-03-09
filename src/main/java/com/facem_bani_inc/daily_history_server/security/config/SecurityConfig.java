@@ -2,10 +2,14 @@ package com.facem_bani_inc.daily_history_server.security.config;
 
 import com.facem_bani_inc.daily_history_server.security.jwt.AuthEntryPointJwt;
 import com.facem_bani_inc.daily_history_server.security.jwt.AuthTokenFilter;
+import com.facem_bani_inc.daily_history_server.security.jwt.PipelineHmacAuthFilter;
 import com.facem_bani_inc.daily_history_server.security.service.UserDetailsServiceImpl;
+import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -69,18 +73,19 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, @Value("${server.pipelineSecret}") String pipelineSecret) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth ->
-                        auth.requestMatchers(
-                                "/api/v1/auth/**",
-                                "/api/v1/test/**"
-                        ).permitAll().anyRequest().authenticated()
+                .authorizeHttpRequests(auth -> auth
+                        .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/test/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/daily-content").hasRole("PIPELINE")
+                        .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
+                .addFilterBefore(new PipelineHmacAuthFilter(pipelineSecret, 300), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

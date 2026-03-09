@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: daily-history-server-test
+
+  datasource:
+    url: jdbc:h2:mem:daily_history_test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: test
+    password: secret
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: false
+    show-sql: false
+
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 0
+  jwtSecret: test-jwt-secret
+  jwtExpirationMs: 86400000
+  pipelineSecret: test-pipeline-secret
+
+google:
+  oauth:
+    client-ids: test-client-id.apps.googleusercontent.com
+
+cloudinary:
+  cloudName: test
+  apiKey: test
+  apiSecret: test
+  folder: daily-history-test
