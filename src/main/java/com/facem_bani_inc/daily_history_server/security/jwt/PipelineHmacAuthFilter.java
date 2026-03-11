@@ -9,7 +9,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -31,9 +30,8 @@ public class PipelineHmacAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        ContentCachingRequestWrapper wrapped = new ContentCachingRequestWrapper(request);
-        byte[] body = StreamUtils.copyToByteArray(wrapped.getInputStream());
 
+        byte[] body = StreamUtils.copyToByteArray(request.getInputStream());
         String timestampHeader = request.getHeader("X-Timestamp");
         String signatureHeader = request.getHeader("X-Signature");
 
@@ -66,7 +64,7 @@ public class PipelineHmacAuthFilter extends OncePerRequestFilter {
         };
         auth.setAuthenticated(true);
         SecurityContextHolder.getContext().setAuthentication(auth);
-        filterChain.doFilter(wrapped, response);
+        filterChain.doFilter(new CachedBodyHttpServletRequest(request, body), response);
     }
 
     @Override
