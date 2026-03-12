@@ -8,6 +8,7 @@ import com.facem_bani_inc.daily_history_server.model.dto.EventDTO;
 import com.facem_bani_inc.daily_history_server.model.dto.TranslationDTO;
 import com.facem_bani_inc.daily_history_server.repository.DailyContentRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,6 +21,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DailyContentService {
 
     private final DailyContentRepository dailyContentRepository;
@@ -32,8 +34,10 @@ public class DailyContentService {
         dailyContent.setDateProcessed(date);
         dailyContent.getEvents().clear();
         populateDailyContentFromDto(dailyContent, dailyContentDTO);
+        DailyContent savedContent = dailyContentRepository.save(dailyContent);
+        log.info("DailyContent upsert success for dateProcessed: {} and dailyContentId: {}", date, savedContent.getId());
 
-        return dailyContentRepository.save(dailyContent);
+        return savedContent;
     }
 
     @Transactional(readOnly = true)

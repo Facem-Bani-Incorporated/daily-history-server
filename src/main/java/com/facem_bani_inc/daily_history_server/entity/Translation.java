@@ -16,19 +16,18 @@ public class Translation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "en", nullable = false)
+    @Column(name = "en", nullable = false, columnDefinition = "text")
     private String en;
 
-    @Column(name = "ro", nullable = false)
+    @Column(name = "ro", nullable = false, columnDefinition = "text")
     private String ro;
 
-    @Column(name = "es", nullable = false)
+    @Column(name = "es", nullable = false, columnDefinition = "text")
     private String es;
 
-    @Column(name = "de", nullable = false)
+    @Column(name = "de", nullable = false, columnDefinition = "text")
     private String de;
 
-    @Column(name = "fr", nullable = false)
+    @Column(name = "fr", nullable = false, columnDefinition = "text")
     private String fr;
-
 }
