@@ -69,7 +69,7 @@ public class PipelineHmacAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return !("POST".equals(request.getMethod()) && "/api/daily-content".equals(request.getRequestURI()));
+        return !("POST".equals(request.getMethod()) && "/api/v1/daily-content".equals(request.getRequestURI()));
     }
 
     private static String hmacBase64(byte[] secret, String data) {

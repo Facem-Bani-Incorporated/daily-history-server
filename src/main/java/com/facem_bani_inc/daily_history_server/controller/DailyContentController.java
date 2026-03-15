@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/api/daily-content")
+@RequestMapping("/api/v1/daily-content")
 @RequiredArgsConstructor
 public class DailyContentController {
 

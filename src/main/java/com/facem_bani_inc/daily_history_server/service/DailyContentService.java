@@ -9,6 +9,8 @@ import com.facem_bani_inc.daily_history_server.model.dto.TranslationDTO;
 import com.facem_bani_inc.daily_history_server.repository.DailyContentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,6 +29,7 @@ public class DailyContentService {
     private final DailyContentRepository dailyContentRepository;
 
     @Transactional
+    @CacheEvict(cacheNames = "dailyContentByDate", key = "#dailyContentDTO.dateProcessed()")
     public DailyContent upsertDailyContent(DailyContentDTO dailyContentDTO) {
         LocalDate date = dailyContentDTO.dateProcessed();
         DailyContent dailyContent = dailyContentRepository.findByDateProcessed(date)
@@ -41,6 +44,7 @@ public class DailyContentService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = "dailyContentByDate", key = "#date")
     public DailyContentDTO getDailyContentByDate(LocalDate date) {
         DailyContent dailyContent = dailyContentRepository.findByDateProcessedWithEvents(date)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "DailyContent not found for date: " + date));

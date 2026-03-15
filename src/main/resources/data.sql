@@ -1,3 +1,5 @@
+CREATE UNIQUE INDEX daily_content_date_processed_index ON daily_content(date_processed);
+
 INSERT INTO roles(name) VALUES('USER');
 INSERT INTO roles(name) VALUES('MODERATOR');
 INSERT INTO roles(name) VALUES('ADMIN');
