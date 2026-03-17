@@ -1,14 +1,18 @@
-CREATE UNIQUE INDEX daily_content_date_processed_index ON daily_content(date_processed);
+ALTER TABLE user_roles ADD CONSTRAINT uk_user_roles UNIQUE (user_id, role_id);
 
-INSERT INTO roles(name) VALUES('USER');
-INSERT INTO roles(name) VALUES('MODERATOR');
-INSERT INTO roles(name) VALUES('ADMIN');
+CREATE UNIQUE INDEX IF NOT EXISTS daily_content_date_processed_index ON daily_content(date_processed);
+
+INSERT INTO roles(name) VALUES('USER') ON CONFLICT (id) DO NOTHING;
+INSERT INTO roles(name) VALUES('MODERATOR') ON CONFLICT (id) DO NOTHING;
+INSERT INTO roles(name) VALUES('ADMIN') ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO users(id, username, email, password, auth_provider)
-VALUES(100,'admin1', 'admin@admin.com', '$2a$10$YyK.hHmRuGALAF22./9bYOhSnoAN56V38Btz5kZQD1a3xd.RbdXeG', 'LOCAL');
+VALUES(100,'admin1', 'admin@admin.com', '$2a$10$YyK.hHmRuGALAF22./9bYOhSnoAN56V38Btz5kZQD1a3xd.RbdXeG', 'LOCAL')
+    ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO user_roles(user_id, role_id)
-VALUES(100, 3);
+VALUES(100, 3)
+    ON CONFLICT DO NOTHING;
 
 
 -- INSERT INTO daily_content (id, date_processed)
