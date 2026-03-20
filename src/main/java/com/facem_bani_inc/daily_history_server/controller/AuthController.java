@@ -2,8 +2,8 @@ package com.facem_bani_inc.daily_history_server.controller;
 
 import com.facem_bani_inc.daily_history_server.entity.Role;
 import com.facem_bani_inc.daily_history_server.entity.User;
-import com.facem_bani_inc.daily_history_server.model.EAuthProvider;
-import com.facem_bani_inc.daily_history_server.model.ERole;
+import com.facem_bani_inc.daily_history_server.model.enums.EAuthProvider;
+import com.facem_bani_inc.daily_history_server.model.enums.ERole;
 import com.facem_bani_inc.daily_history_server.payload.request.GoogleSignInRequest;
 import com.facem_bani_inc.daily_history_server.payload.request.LoginRequest;
 import com.facem_bani_inc.daily_history_server.payload.request.SignupRequest;

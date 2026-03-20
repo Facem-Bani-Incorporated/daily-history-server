@@ -1,6 +1,6 @@
 package com.facem_bani_inc.daily_history_server.entity;
 
-import com.facem_bani_inc.daily_history_server.model.ECategory;
+import com.facem_bani_inc.daily_history_server.model.enums.ECategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

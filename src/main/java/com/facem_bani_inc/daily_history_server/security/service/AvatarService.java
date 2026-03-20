@@ -1,7 +1,7 @@
 package com.facem_bani_inc.daily_history_server.security.service;
 
 import com.cloudinary.Cloudinary;
-import com.facem_bani_inc.daily_history_server.model.EAuthProvider;
+import com.facem_bani_inc.daily_history_server.model.enums.EAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

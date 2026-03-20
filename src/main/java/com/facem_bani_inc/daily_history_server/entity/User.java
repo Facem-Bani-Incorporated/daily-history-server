@@ -1,6 +1,6 @@
 package com.facem_bani_inc.daily_history_server.entity;
 
-import com.facem_bani_inc.daily_history_server.model.EAuthProvider;
+import com.facem_bani_inc.daily_history_server.model.enums.EAuthProvider;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -51,7 +51,6 @@ public class User {
 
     @Column(name = "provider_user_id", length = 128)
     private String providerUserId;
-
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(  name = "user_roles",
