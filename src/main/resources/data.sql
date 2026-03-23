@@ -1,10 +1,10 @@
-ALTER TABLE user_roles ADD CONSTRAINT uk_user_roles UNIQUE (user_id, role_id);
-
+CREATE UNIQUE INDEX IF NOT EXISTS user_roles_index ON user_roles (user_id, role_id);
 CREATE UNIQUE INDEX IF NOT EXISTS daily_content_date_processed_index ON daily_content(date_processed);
+CREATE UNIQUE INDEX IF NOT EXISTS roles_name_index ON roles (name);
 
-INSERT INTO roles(name) VALUES('USER') ON CONFLICT (id) DO NOTHING;
-INSERT INTO roles(name) VALUES('MODERATOR') ON CONFLICT (id) DO NOTHING;
-INSERT INTO roles(name) VALUES('ADMIN') ON CONFLICT (id) DO NOTHING;
+INSERT INTO roles(name) VALUES('USER') ON CONFLICT (name) DO NOTHING;
+INSERT INTO roles(name) VALUES('MODERATOR') ON CONFLICT (name) DO NOTHING;
+INSERT INTO roles(name) VALUES('ADMIN') ON CONFLICT (name) DO NOTHING;
 
 INSERT INTO users(id, username, email, password, auth_provider)
 VALUES(100,'admin1', 'admin@admin.com', '$2a$10$YyK.hHmRuGALAF22./9bYOhSnoAN56V38Btz5kZQD1a3xd.RbdXeG', 'LOCAL')
