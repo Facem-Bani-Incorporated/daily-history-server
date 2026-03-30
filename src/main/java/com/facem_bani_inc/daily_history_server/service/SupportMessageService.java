@@ -4,12 +4,11 @@ import com.facem_bani_inc.daily_history_server.entity.SupportMessage;
 import com.facem_bani_inc.daily_history_server.entity.User;
 import com.facem_bani_inc.daily_history_server.model.dto.SupportMessageRequest;
 import com.facem_bani_inc.daily_history_server.repository.SupportMessageRepository;
+import com.resend.core.exception.ResendException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,11 +17,8 @@ import org.springframework.stereotype.Service;
 public class SupportMessageService {
 
     private final SupportMessageRepository supportMessageRepository;
+    private final ResendEmailService resendEmailService;
     private final UserService userService;
-    private final JavaMailSender mailSender;
-
-    @Value("${spring.mail.username}")
-    private String senderEmail;
 
     @Value("${app.support.to}")
     private String adminEmail;
@@ -32,41 +28,33 @@ public class SupportMessageService {
         SupportMessage supportMessage = new SupportMessage();
         supportMessage.setUser(authenticatedUser);
         supportMessage.setCategory(request.category());
-        supportMessage.setSubject(request.subject().trim());
-        supportMessage.setMessage(request.message().trim());
+        supportMessage.setSubject(request.subject());
+        supportMessage.setMessage(request.message());
         SupportMessage savedMessage = supportMessageRepository.save(supportMessage);
 
         try {
             sendEmail(savedMessage);
-        } catch (MailException e) {
+        } catch (MailException | ResendException e) {
             log.error("Failed to send support email for message id {}", savedMessage.getId(), e);
         }
     }
 
-    private void sendEmail(SupportMessage savedMessage) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setFrom(senderEmail);
-        mailMessage.setTo(adminEmail);
-        mailMessage.setReplyTo(savedMessage.getUser().getEmail());
-        mailMessage.setSubject("Support message: " + savedMessage.getSubject());
-        mailMessage.setText("""
-                New message from Daily History.
+    public void sendEmail(SupportMessage savedMessage) throws ResendException {
+        String html = """
+                <h2>New support message from Daily History</h2>
+                <p><b>Username:</b> %s</p>
+                <p><b>Email:</b> %s</p>
+                <p><b>Category:</b> %s</p>
+                <p><b>Message:</b></p>
+                <p>%s</p>
+                """
+                .formatted(
+                        savedMessage.getUser().getUsername(),
+                        savedMessage.getUser().getEmail(),
+                        savedMessage.getCategory(),
+                        savedMessage.getMessage()
+                );
 
-                Username: %s
-                Email: %s
-                Category: %s
-                Date: %s
-
-                Message:
-                %s
-                """.formatted(
-                savedMessage.getUser().getUsername(),
-                savedMessage.getUser().getEmail(),
-                savedMessage.getCategory(),
-                savedMessage.getCreatedAt().toLocalDate(),
-                savedMessage.getMessage()
-        ));
-        mailSender.send(mailMessage);
-        log.info("Support email sent successfully to {}", adminEmail);
+        resendEmailService.sendEmail(adminEmail, "Support message: " + savedMessage.getSubject(), html);
     }
 }
