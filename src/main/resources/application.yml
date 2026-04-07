@@ -2,11 +2,6 @@ spring:
   application:
     name: daily-history-server
 
-  cache:
-    cache-names: dailyContentByDate
-    caffeine:
-      spec: maximumSize=20,expireAfterWrite=24h
-
   jpa:
     properties:
       hibernate:

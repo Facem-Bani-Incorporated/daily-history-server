@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.facem_bani_inc.daily_history_server.utils.Constants.DAILY_CONTENT_BY_DATE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -29,7 +30,7 @@ public class DailyContentService {
     private final DailyContentRepository dailyContentRepository;
 
     @Transactional
-    @CacheEvict(cacheNames = "dailyContentByDate", key = "#dailyContentDTO.dateProcessed()")
+    @CacheEvict(cacheNames = DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()")
     public DailyContent upsertDailyContent(DailyContentDTO dailyContentDTO) {
         LocalDate date = dailyContentDTO.dateProcessed();
         DailyContent dailyContent = dailyContentRepository.findByDateProcessed(date)
@@ -44,7 +45,7 @@ public class DailyContentService {
     }
 
     @Transactional(readOnly = true)
-    @Cacheable(cacheNames = "dailyContentByDate", key = "#date")
+    @Cacheable(cacheNames = DAILY_CONTENT_BY_DATE, key = "#date")
     public DailyContentDTO getDailyContentByDate(LocalDate date) {
         DailyContent dailyContent = dailyContentRepository.findByDateProcessedWithEvents(date)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "DailyContent not found for date: " + date));
