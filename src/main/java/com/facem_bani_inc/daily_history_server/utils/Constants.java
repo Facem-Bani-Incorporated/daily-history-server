@@ -4,4 +4,5 @@ public final class Constants {
 
     public static final String DAILY_CONTENT_BY_DATE = "dailyContentByDate";
     public static final String GAMIFICATION_BY_USER_ID = "gamificationByUserId";
+    public static final String LEADERBOARD = "leaderboard";
 }

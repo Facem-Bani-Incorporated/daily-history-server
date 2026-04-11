@@ -45,7 +45,7 @@ public class UserGamification {
     private String gamificationData;
 
     @ElementCollection
-    @CollectionTable(name = "user_saved_events", joinColumns = @JoinColumn(name = "user_profile_id"))
+    @CollectionTable(name = "user_saved_events", joinColumns = @JoinColumn(name = "user_gamification_id"))
     @Column(name = "event_id", nullable = false)
     private List<Long> savedEvents = new ArrayList<>();
 }

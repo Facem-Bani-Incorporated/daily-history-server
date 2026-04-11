@@ -1,5 +1,7 @@
 package com.facem_bani_inc.daily_history_server.model.dto;
 
+import java.util.List;
+
 public record GamificationSyncDTO(
         Integer totalXP,
         Integer currentStreak,
@@ -7,6 +9,6 @@ public record GamificationSyncDTO(
         Integer totalEventsRead,
         Integer dailyGoalsCompleted,
         String lastActiveDate,
-        String gamificationData
-) {
-}
+        String gamificationData,
+        List<Long> savedEvents
+) {}

@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.facem_bani_inc.daily_history_server.utils.Constants.DAILY_CONTENT_BY_DATE;
 import static com.facem_bani_inc.daily_history_server.utils.Constants.GAMIFICATION_BY_USER_ID;
+import static com.facem_bani_inc.daily_history_server.utils.Constants.LEADERBOARD;
 
 @Configuration
 public class CacheConfig {
@@ -29,6 +30,11 @@ public class CacheConfig {
                         Caffeine.newBuilder()
                                 .maximumSize(2000)
                                 .expireAfterWrite(30, TimeUnit.MINUTES)
+                                .build()),
+                new CaffeineCache(LEADERBOARD,
+                        Caffeine.newBuilder()
+                                .maximumSize(1)
+                                .expireAfterWrite(5, TimeUnit.MINUTES)
                                 .build())
         ));
         return cacheManager;

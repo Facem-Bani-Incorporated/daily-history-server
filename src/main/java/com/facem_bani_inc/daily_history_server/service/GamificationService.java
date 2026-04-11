@@ -3,6 +3,7 @@ package com.facem_bani_inc.daily_history_server.service;
 import com.facem_bani_inc.daily_history_server.entity.User;
 import com.facem_bani_inc.daily_history_server.entity.UserGamification;
 import com.facem_bani_inc.daily_history_server.model.dto.GamificationSyncDTO;
+import com.facem_bani_inc.daily_history_server.model.dto.LeaderboardDTO;
 import com.facem_bani_inc.daily_history_server.repository.UserGamificationRepository;
 import com.facem_bani_inc.daily_history_server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +15,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.facem_bani_inc.daily_history_server.utils.Constants.GAMIFICATION_BY_USER_ID;
+import static com.facem_bani_inc.daily_history_server.utils.Constants.LEADERBOARD;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -27,11 +31,26 @@ public class GamificationService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
+    @Cacheable(cacheNames = LEADERBOARD, key = "'all'")
+    public List<LeaderboardDTO> getAllLeaderboardData() {
+        return userGamificationRepository.findAllWithUsers().stream()
+                .map(ug -> new LeaderboardDTO(
+                        ug.getUser().getId(),
+                        ug.getUser().getUsername(),
+                        ug.getTotalXP(),
+                        ug.getCurrentStreak(),
+                        ug.getTotalEventsRead(),
+                        ug.getDailyGoalsCompleted()
+                ))
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
     @Cacheable(cacheNames = GAMIFICATION_BY_USER_ID, key = "#userId")
     public GamificationSyncDTO getGamification(Long userId) {
-        UserGamification userGamification = userGamificationRepository.findByUserId(userId).orElse(null);
+        UserGamification userGamification = userGamificationRepository.findByUserIdWithSavedEvents(userId).orElse(null);
         if (userGamification == null) {
-            return new GamificationSyncDTO(0, 0, 0, 0, 0, null, null);
+            return new GamificationSyncDTO(0, 0, 0, 0, 0, null, null, List.of());
         }
         return toDto(userGamification);
     }
@@ -55,6 +74,10 @@ public class GamificationService {
         ug.setDailyGoalsCompleted(safeInt(dto.dailyGoalsCompleted()));
         ug.setLastActiveDate(dto.lastActiveDate() != null ? LocalDate.parse(dto.lastActiveDate()) : null);
         ug.setGamificationData(dto.gamificationData());
+        ug.getSavedEvents().clear();
+        if (dto.savedEvents() != null) {
+            ug.getSavedEvents().addAll(dto.savedEvents());
+        }
 
         userGamificationRepository.save(ug);
         log.info("Gamification synced for userId: {}", userId);
@@ -68,7 +91,8 @@ public class GamificationService {
                 ug.getTotalEventsRead(),
                 ug.getDailyGoalsCompleted(),
                 ug.getLastActiveDate() != null ? ug.getLastActiveDate().toString() : null,
-                ug.getGamificationData()
+                ug.getGamificationData(),
+                ug.getSavedEvents() != null ? new ArrayList<>(ug.getSavedEvents()) : List.of()
         );
     }
 
