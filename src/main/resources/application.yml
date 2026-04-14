@@ -18,6 +18,9 @@ google:
   oauth:
     client-ids: ${GOOGLE_OAUTH_CLIENT_IDS}
 
+apple:
+  bundle-id: ${APPLE_BUNDLE_ID}
+
 cloudinary:
   cloudName: ${CLOUDINARY_CLOUD_NAME}
   apiKey: ${CLOUDINARY_API_KEY}

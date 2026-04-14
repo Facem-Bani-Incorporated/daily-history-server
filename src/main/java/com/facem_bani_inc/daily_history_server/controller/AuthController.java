@@ -4,6 +4,7 @@ import com.facem_bani_inc.daily_history_server.entity.Role;
 import com.facem_bani_inc.daily_history_server.entity.User;
 import com.facem_bani_inc.daily_history_server.model.enums.EAuthProvider;
 import com.facem_bani_inc.daily_history_server.model.enums.ERole;
+import com.facem_bani_inc.daily_history_server.payload.request.AppleSignInRequest;
 import com.facem_bani_inc.daily_history_server.payload.request.GoogleSignInRequest;
 import com.facem_bani_inc.daily_history_server.payload.request.LoginRequest;
 import com.facem_bani_inc.daily_history_server.payload.request.SignupRequest;
@@ -12,6 +13,7 @@ import com.facem_bani_inc.daily_history_server.payload.response.MessageResponse;
 import com.facem_bani_inc.daily_history_server.repository.RoleRepository;
 import com.facem_bani_inc.daily_history_server.repository.UserRepository;
 import com.facem_bani_inc.daily_history_server.security.jwt.JwtUtils;
+import com.facem_bani_inc.daily_history_server.security.service.AppleAuthService;
 import com.facem_bani_inc.daily_history_server.security.service.GoogleAuthService;
 import com.facem_bani_inc.daily_history_server.security.service.UserDetailsImpl;
 import jakarta.validation.Valid;
@@ -44,6 +46,7 @@ public class AuthController {
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
     private final GoogleAuthService googleAuthService;
+    private final AppleAuthService appleAuthService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -96,5 +99,11 @@ public class AuthController {
     @PostMapping("/google")
     public ResponseEntity<?> authenticateGoogle(@Valid @RequestBody GoogleSignInRequest request) {
         return ResponseEntity.ok(googleAuthService.authenticate(request.getIdToken()));
+    }
+
+    @PostMapping("/apple")
+    public ResponseEntity<?> authenticateApple(@Valid @RequestBody AppleSignInRequest request) {
+        return ResponseEntity.ok(appleAuthService.authenticate(
+                request.getIdToken(), request.getFullName(), request.getEmail()));
     }
 }

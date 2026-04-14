@@ -43,6 +43,9 @@ google:
   oauth:
     client-ids: test-client-id.apps.googleusercontent.com
 
+apple:
+  bundle-id: com.test.dailyhistory
+
 cloudinary:
   cloudName: test
   apiKey: test
