@@ -27,4 +27,9 @@ public class DailyContentController {
     public DailyContentDTO getDailyContent(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return dailyContentService.getDailyContentByDate(date);
     }
+
+    @GetMapping(value = "/pro/by-date")
+    public DailyContentDTO getProDailyContent(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return dailyContentService.getProDailyContentByDate(date);
+    }
 }

@@ -30,14 +30,18 @@ public class UserDetailsImpl implements UserDetails {
     @Getter
     private String avatarUrl;
 
+    @Getter
+    private boolean pro;
+
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email, String password, String avatarUrl, Collection<? extends GrantedAuthority> authorities) {
+    public UserDetailsImpl(Long id, String username, String email, String password, String avatarUrl, boolean pro, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
         this.avatarUrl = avatarUrl;
+        this.pro = pro;
         this.authorities = authorities;
     }
 
@@ -52,6 +56,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getEmail(),
                 user.getPassword(),
                 user.getAvatarUrl(),
+                user.isPro(),
                 authorities);
     }
 

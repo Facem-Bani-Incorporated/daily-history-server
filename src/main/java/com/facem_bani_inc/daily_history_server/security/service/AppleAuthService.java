@@ -75,6 +75,7 @@ public class AppleAuthService {
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 userDetails.getAvatarUrl(),
+                userDetails.isPro(),
                 roles
         );
     }

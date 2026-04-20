@@ -79,6 +79,7 @@ public class GoogleAuthService {
                 userDetails.getUsername(),
                 userDetails.getEmail(),
                 userDetails.getAvatarUrl(),
+                userDetails.isPro(),
                 roles
         );
     }

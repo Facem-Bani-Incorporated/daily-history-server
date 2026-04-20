@@ -13,6 +13,8 @@ public record EventDTO(
         Double impactScore,
         String sourceUrl,
         Integer pageViews30d,
+        boolean isPro,
+        String location,
         List<String> gallery
 ) {
 }

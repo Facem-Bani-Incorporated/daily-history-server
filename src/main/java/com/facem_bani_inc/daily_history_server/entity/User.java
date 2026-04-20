@@ -52,6 +52,9 @@ public class User {
     @Column(name = "provider_user_id", length = 128)
     private String providerUserId;
 
+    @Column(name = "is_pro", nullable = false)
+    private boolean pro = false;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(  name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

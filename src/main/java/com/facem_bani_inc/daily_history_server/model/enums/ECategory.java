@@ -26,5 +26,14 @@ public enum ECategory {
     EXPLORATION,
 
     @JsonProperty("religion_phil")
-    RELIGION_PHIL;
+    RELIGION_PHIL,
+
+    @JsonProperty("media")
+    MEDIA,
+
+    @JsonProperty("sport")
+    SPORT,
+
+    @JsonProperty("personalities")
+    PERSONALITIES
 }

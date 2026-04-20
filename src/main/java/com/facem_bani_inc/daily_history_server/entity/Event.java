@@ -36,6 +36,12 @@ public class Event {
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 
+    @Column(name = "is_pro", nullable = false)
+    private boolean pro = false;
+
+    @Column(name = "location")
+    private String location;
+
     @Column(name = "impact_score", nullable = false)
     private Double impactScore;
 

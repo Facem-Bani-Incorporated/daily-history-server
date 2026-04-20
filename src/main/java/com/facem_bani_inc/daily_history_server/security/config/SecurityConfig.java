@@ -82,6 +82,7 @@ public class SecurityConfig {
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
                         .requestMatchers("/api/v1/auth/**", "/api/v1/test/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/daily-content").hasRole("PIPELINE")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/users/*/pro").hasRole("PIPELINE")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
