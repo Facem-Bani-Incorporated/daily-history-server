@@ -16,6 +16,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RevenueCatService revenueCatService;
 
     public User getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -30,5 +31,10 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found: " + userId));
         user.setPro(isPro);
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void syncProStatusFromRevenueCat(Long userId) {
+        updateProStatus(userId, revenueCatService.isUserPro(userId));
     }
 }

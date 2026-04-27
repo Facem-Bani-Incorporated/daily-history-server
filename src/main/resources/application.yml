@@ -34,3 +34,7 @@ app:
 resend:
   api-key: ${RESEND_API_KEY}
   from-email: ${RESEND_FROM_EMAIL:onboarding@resend.dev}
+
+revenuecat:
+  secret-key: ${REVENUECAT_SECRET_KEY}
+  webhook-auth-header: ${REVENUECAT_WEBHOOK_AUTH_HEADER}
