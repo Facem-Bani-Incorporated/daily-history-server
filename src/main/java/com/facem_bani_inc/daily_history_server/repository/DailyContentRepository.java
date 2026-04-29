@@ -1,11 +1,13 @@
 package com.facem_bani_inc.daily_history_server.repository;
 
 import com.facem_bani_inc.daily_history_server.entity.DailyContent;
+import com.facem_bani_inc.daily_history_server.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -32,4 +34,15 @@ public interface DailyContentRepository extends JpaRepository<DailyContent, Long
            WHERE dc.dateProcessed = :date AND e.pro = true
            """)
     Optional<DailyContent> findByDateProcessedWithProEvents(LocalDate date);
+
+    @Query("""
+           SELECT e
+           FROM Event e
+           JOIN FETCH e.titleTranslations
+           JOIN FETCH e.narrativeTranslations
+           WHERE e.dailyContent.dateProcessed = :date AND e.pro = false
+           ORDER BY e.impactScore DESC
+           LIMIT 2
+           """)
+    List<Event> findTopTwoFreeEventsByDate(LocalDate date);
 }

@@ -2,6 +2,7 @@ package com.facem_bani_inc.daily_history_server.controller;
 
 import com.facem_bani_inc.daily_history_server.entity.DailyContent;
 import com.facem_bani_inc.daily_history_server.model.dto.DailyContentDTO;
+import com.facem_bani_inc.daily_history_server.model.dto.EventDTO;
 import com.facem_bani_inc.daily_history_server.security.service.UserDetailsImpl;
 import com.facem_bani_inc.daily_history_server.service.DailyContentService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/daily-content")
@@ -40,5 +42,10 @@ public class DailyContentController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Pro subscription required");
         }
         return dailyContentService.getProDailyContentByDate(date);
+    }
+
+    @GetMapping("/guest")
+    public List<EventDTO> getGuestTopEvents() {
+        return dailyContentService.getGuestTopEvents(LocalDate.now());
     }
 }

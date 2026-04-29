@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.facem_bani_inc.daily_history_server.utils.Constants.DAILY_CONTENT_BY_DATE;
+import static com.facem_bani_inc.daily_history_server.utils.Constants.GUEST_TOP_EVENT;
 import static com.facem_bani_inc.daily_history_server.utils.Constants.PRO_DAILY_CONTENT_BY_DATE;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -34,7 +35,8 @@ public class DailyContentService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(cacheNames = DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
-            @CacheEvict(cacheNames = PRO_DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()")
+            @CacheEvict(cacheNames = PRO_DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
+            @CacheEvict(cacheNames = GUEST_TOP_EVENT, key = "#dailyContentDTO.dateProcessed()")
     })
     public DailyContent upsertDailyContent(DailyContentDTO dailyContentDTO) {
         LocalDate date = dailyContentDTO.dateProcessed();
@@ -65,6 +67,16 @@ public class DailyContentService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "DailyContent not found for date: " + date));
 
         return dailyContentToDto(dailyContent);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = GUEST_TOP_EVENT, key = "#date")
+    public List<EventDTO> getGuestTopEvents(LocalDate date) {
+        List<Event> events = dailyContentRepository.findTopTwoFreeEventsByDate(date);
+        if (events.isEmpty()) {
+            throw new ResponseStatusException(NOT_FOUND, "No content available for date: " + date);
+        }
+        return events.stream().map(this::toEventDto).toList();
     }
 
     private void populateDailyContentFromDto(DailyContent dailyContent, DailyContentDTO dailyContentDTO) {
@@ -125,6 +137,21 @@ public class DailyContentService {
                 translation.getEs(),
                 translation.getDe(),
                 translation.getFr()
+        );
+    }
+
+    private EventDTO toEventDto(Event event) {
+        return new EventDTO(
+                event.getCategory(),
+                toTranslationDto(event.getTitleTranslations()),
+                toTranslationDto(event.getNarrativeTranslations()),
+                event.getEventDate(),
+                event.getImpactScore(),
+                event.getSourceUrl(),
+                event.getPageViews30d(),
+                event.isPro(),
+                event.getLocation(),
+                event.getGallery() != null ? new ArrayList<>(event.getGallery()) : new ArrayList<>()
         );
     }
 }

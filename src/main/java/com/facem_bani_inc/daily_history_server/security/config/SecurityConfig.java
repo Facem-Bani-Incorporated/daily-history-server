@@ -80,7 +80,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
-                        .requestMatchers("/api/v1/auth/**", "/api/v1/test/**", "/api/v1/webhooks/**").permitAll()
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/test/**", "/api/v1/webhooks/**", "/api/v1/daily-content/guest").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/daily-content").hasRole("PIPELINE")
                         .anyRequest().authenticated()
                 )
