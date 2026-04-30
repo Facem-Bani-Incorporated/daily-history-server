@@ -21,7 +21,7 @@ public interface DailyContentRepository extends JpaRepository<DailyContent, Long
            LEFT JOIN FETCH dc.events e
            LEFT JOIN FETCH e.titleTranslations
            LEFT JOIN FETCH e.narrativeTranslations
-           WHERE dc.dateProcessed = :date AND e.pro = false
+           WHERE dc.dateProcessed = :date
            """)
     Optional<DailyContent> findByDateProcessedWithEvents(LocalDate date);
 
