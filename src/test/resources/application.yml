@@ -29,6 +29,9 @@ spring:
     defer-datasource-initialization: false
     show-sql: false
 
+  flyway:
+    enabled: false
+
   sql:
     init:
       mode: never
@@ -55,3 +58,11 @@ cloudinary:
 app:
   support:
     to: fakeEmail
+
+revenuecat:
+  secret-key: test-revenuecat-secret
+  webhook-auth-header: test-webhook-header
+
+resend:
+  api-key: test-resend-key
+  from-email: test@test.com

@@ -24,7 +24,7 @@ public class UserGamification {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Column(nullable = false)
+    @Column(name = "total_xp", nullable = false)
     private Integer totalXP = 0;
 
     @Column(nullable = false)
