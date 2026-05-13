@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record EventDTO(
+        Long id,
         ECategory category,
         TranslationDTO titleTranslations,
         TranslationDTO narrativeTranslations,

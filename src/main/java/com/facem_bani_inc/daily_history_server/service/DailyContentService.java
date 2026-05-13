@@ -114,6 +114,7 @@ public class DailyContentService {
         if (dailyContent.getEvents() != null) {
             for (Event event : dailyContent.getEvents()) {
                 eventDtos.add(new EventDTO(
+                        event.getId(),
                         event.getCategory(),
                         toTranslationDto(event.getTitleTranslations()),
                         toTranslationDto(event.getNarrativeTranslations()),
@@ -142,6 +143,7 @@ public class DailyContentService {
 
     private EventDTO toEventDto(Event event) {
         return new EventDTO(
+                event.getId(),
                 event.getCategory(),
                 toTranslationDto(event.getTitleTranslations()),
                 toTranslationDto(event.getNarrativeTranslations()),
