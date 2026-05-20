@@ -10,11 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static com.facem_bani_inc.daily_history_server.utils.Constants.DAILY_CONTENT_BY_DATE;
-import static com.facem_bani_inc.daily_history_server.utils.Constants.GAMIFICATION_BY_USER_ID;
-import static com.facem_bani_inc.daily_history_server.utils.Constants.GUEST_TOP_EVENT;
-import static com.facem_bani_inc.daily_history_server.utils.Constants.LEADERBOARD;
-import static com.facem_bani_inc.daily_history_server.utils.Constants.PRO_DAILY_CONTENT_BY_DATE;
+import static com.facem_bani_inc.daily_history_server.utils.Constants.*;
 
 @Configuration
 public class CacheConfig {
@@ -47,6 +43,11 @@ public class CacheConfig {
                         Caffeine.newBuilder()
                                 .maximumSize(1)
                                 .expireAfterWrite(5, TimeUnit.MINUTES)
+                                .build()),
+                new CaffeineCache(QUIZ_BY_EVENT_ID,
+                        Caffeine.newBuilder()
+                                .maximumSize(500)
+                                .expireAfterWrite(24, TimeUnit.HOURS)
                                 .build())
         ));
         return cacheManager;

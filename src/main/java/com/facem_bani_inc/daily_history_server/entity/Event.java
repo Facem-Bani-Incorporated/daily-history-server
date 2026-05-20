@@ -59,4 +59,7 @@ public class Event {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "daily_content_id", nullable = false)
     private DailyContent dailyContent;
+
+    @OneToOne(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Quiz quiz;
 }

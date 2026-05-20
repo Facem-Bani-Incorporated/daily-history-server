@@ -4,6 +4,7 @@ import com.facem_bani_inc.daily_history_server.model.enums.ECategory;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public record EventDTO(
         Long id,
@@ -16,6 +17,7 @@ public record EventDTO(
         Integer pageViews30d,
         boolean isPro,
         String location,
-        List<String> gallery
+        List<String> gallery,
+        Map<String, List<QuizQuestionInputDTO>> quiz
 ) {
 }
