@@ -16,4 +16,7 @@ public final class Constants {
     // Flat per-quiz reward: a perfect run earns 500 XP, any other completion earns 100 XP.
     public static final int XP_QUIZ_PERFECT = 500;
     public static final int XP_QUIZ_PARTIAL = 100;
+
+    // Language served when a quiz has no questions in the requested language.
+    public static final String DEFAULT_QUIZ_LANGUAGE = "en";
 }

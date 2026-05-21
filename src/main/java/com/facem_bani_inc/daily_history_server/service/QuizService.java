@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -42,9 +43,11 @@ public class QuizService {
         if (!eventRepository.existsById(eventId)) {
             throw new ResponseStatusException(NOT_FOUND, "Event not found: " + eventId);
         }
-        Quiz quiz = quizRepository.findByEventIdAndLanguage(eventId, language)
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Quiz not found for eventId=" + eventId + " lang=" + language));
+        Quiz quiz = findQuizWithFallback(eventId, language);
+        // Report the language actually served (may differ from the request when we fall back).
+        String servedLanguage = quiz.getQuestions().isEmpty()
+                ? language
+                : quiz.getQuestions().get(0).getLanguage();
 
         List<QuizQuestionResponseDTO> questions = quiz.getQuestions().stream()
                 .map(q -> new QuizQuestionResponseDTO(
@@ -57,7 +60,18 @@ public class QuizService {
                 ))
                 .toList();
 
-        return new QuizResponseDTO(eventId, language, questions);
+        return new QuizResponseDTO(eventId, servedLanguage, questions);
+    }
+
+    // Serve the requested language; if it has no questions, fall back to the default language
+    // so a missing translation never makes the quiz disappear for the user.
+    private Quiz findQuizWithFallback(Long eventId, String language) {
+        return quizRepository.findByEventIdAndLanguage(eventId, language)
+                .or(() -> DEFAULT_QUIZ_LANGUAGE.equalsIgnoreCase(language)
+                        ? Optional.empty()
+                        : quizRepository.findByEventIdAndLanguage(eventId, DEFAULT_QUIZ_LANGUAGE))
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
+                        "Quiz not found for eventId=" + eventId + " lang=" + language));
     }
 
     @Transactional(readOnly = true)
@@ -74,9 +88,7 @@ public class QuizService {
             throw new ResponseStatusException(CONFLICT, "Quiz already completed for this event");
         }
 
-        Quiz quiz = quizRepository.findByEventIdAndLanguage(eventId, dto.language())
-                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND,
-                        "Quiz not found for eventId=" + eventId + " lang=" + dto.language()));
+        Quiz quiz = findQuizWithFallback(eventId, dto.language());
 
         Map<String, QuizQuestion> questionByKey = quiz.getQuestions().stream()
                 .collect(Collectors.toMap(QuizQuestion::getQuestionKey, Function.identity()));
