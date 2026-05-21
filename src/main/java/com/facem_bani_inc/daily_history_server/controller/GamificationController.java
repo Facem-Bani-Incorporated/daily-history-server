@@ -20,7 +20,8 @@ public class GamificationController {
     private final GamificationService gamificationService;
 
     @GetMapping("/all")
-    public ResponseEntity<List<LeaderboardDTO>> getAllGamification() {
+    public ResponseEntity<List<LeaderboardDTO>> getAllGamification(
+            @RequestParam(value = "period", defaultValue = "alltime") String period) {
         return ResponseEntity.ok(gamificationService.getAllLeaderboardData());
     }
 

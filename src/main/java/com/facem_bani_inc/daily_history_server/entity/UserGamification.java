@@ -41,6 +41,12 @@ public class UserGamification {
 
     private LocalDate lastActiveDate;
 
+    @Column(name = "monthly_xp", nullable = false)
+    private Integer monthlyXP = 0;
+
+    @Column(name = "monthly_xp_reset_date")
+    private LocalDate monthlyXPResetDate;
+
     @Column(columnDefinition = "text")
     private String gamificationData;
 
