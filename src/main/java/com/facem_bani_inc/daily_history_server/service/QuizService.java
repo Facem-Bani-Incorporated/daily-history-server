@@ -101,9 +101,7 @@ public class QuizService {
 
         int totalQuestions = questionByKey.size();
         boolean perfectScore = correctCount == totalQuestions && totalQuestions > 0;
-        int xpEarned = (correctCount * XP_PER_CORRECT_ANSWER)
-                + ((totalQuestions - correctCount) * XP_PER_WRONG_ANSWER)
-                + (perfectScore ? XP_PERFECT_SCORE_BONUS : 0);
+        int xpEarned = perfectScore ? XP_QUIZ_PERFECT : XP_QUIZ_PARTIAL;
 
         UserQuizAttempt attempt = new UserQuizAttempt();
         attempt.setUserId(userId);

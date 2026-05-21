@@ -12,4 +12,8 @@ public final class Constants {
     public static final int XP_PER_CORRECT_ANSWER = 20;
     public static final int XP_PER_WRONG_ANSWER = 5;
     public static final int XP_PERFECT_SCORE_BONUS = 50;
+
+    // Flat per-quiz reward: a perfect run earns 500 XP, any other completion earns 100 XP.
+    public static final int XP_QUIZ_PERFECT = 500;
+    public static final int XP_QUIZ_PARTIAL = 100;
 }

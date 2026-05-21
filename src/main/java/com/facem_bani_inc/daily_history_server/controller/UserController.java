@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/current")
+    @GetMapping({"/current", "/me"})
     public UserProfileDTO getCurrentUser() {
         User user = userService.getAuthenticatedUser();
         return new UserProfileDTO(user.getId(), user.getUsername(), user.getEmail(), user.getAvatarUrl(), user.isPro());
