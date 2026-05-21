@@ -40,7 +40,8 @@ public class GamificationService {
                         ug.getTotalXP(),
                         ug.getCurrentStreak(),
                         ug.getTotalEventsRead(),
-                        ug.getDailyGoalsCompleted()
+                        ug.getDailyGoalsCompleted(),
+                        ug.getMonthlyXP() != null ? ug.getMonthlyXP() : 0
                 ))
                 .toList();
     }
@@ -74,6 +75,18 @@ public class GamificationService {
         ug.setDailyGoalsCompleted(safeInt(dto.dailyGoalsCompleted()));
         ug.setLastActiveDate(dto.lastActiveDate() != null ? LocalDate.parse(dto.lastActiveDate()) : null);
         ug.setGamificationData(dto.gamificationData());
+
+        // Monthly XP: reset on new month, then store client value
+        LocalDate today = LocalDate.now();
+        LocalDate firstOfMonth = today.withDayOfMonth(1);
+        LocalDate lastReset = ug.getMonthlyXPResetDate();
+        if (lastReset == null || lastReset.isBefore(firstOfMonth)) {
+            ug.setMonthlyXP(0);
+            ug.setMonthlyXPResetDate(firstOfMonth);
+        }
+        if (dto.monthlyXP() != null && dto.monthlyXP() >= 0) {
+            ug.setMonthlyXP(dto.monthlyXP());
+        }
         ug.getSavedEvents().clear();
         if (dto.savedEvents() != null) {
             ug.getSavedEvents().addAll(dto.savedEvents());
@@ -92,7 +105,8 @@ public class GamificationService {
                 ug.getDailyGoalsCompleted(),
                 ug.getLastActiveDate() != null ? ug.getLastActiveDate().toString() : null,
                 ug.getGamificationData(),
-                ug.getSavedEvents() != null ? new ArrayList<>(ug.getSavedEvents()) : List.of()
+                ug.getSavedEvents() != null ? new ArrayList<>(ug.getSavedEvents()) : List.of(),
+                ug.getMonthlyXP() != null ? ug.getMonthlyXP() : 0
         );
     }
 

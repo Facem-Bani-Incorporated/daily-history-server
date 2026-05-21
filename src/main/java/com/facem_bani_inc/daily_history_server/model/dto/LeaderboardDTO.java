@@ -6,5 +6,6 @@ public record LeaderboardDTO(
         Integer totalXP,
         Integer currentStreak,
         Integer totalEventsRead,
-        Integer dailyGoalsCompleted
+        Integer dailyGoalsCompleted,
+        Integer monthlyXP
 ) {}

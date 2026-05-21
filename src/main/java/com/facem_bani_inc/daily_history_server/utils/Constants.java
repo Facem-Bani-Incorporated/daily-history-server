@@ -13,9 +13,9 @@ public final class Constants {
     public static final int XP_PER_WRONG_ANSWER = 5;
     public static final int XP_PERFECT_SCORE_BONUS = 50;
 
-    // Quiz reward: 100 XP per correct answer, plus a 400 XP bonus for a perfect run.
+    // Quiz reward: 100 XP per correct answer, plus a 500 XP bonus for a perfect run.
     public static final int XP_QUIZ_PER_CORRECT = 100;
-    public static final int XP_QUIZ_PERFECT_BONUS = 400;
+    public static final int XP_QUIZ_PERFECT_BONUS = 500;
 
     // Language served when a quiz has no questions in the requested language.
     public static final String DEFAULT_QUIZ_LANGUAGE = "en";

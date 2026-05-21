@@ -10,5 +10,6 @@ public record GamificationSyncDTO(
         Integer dailyGoalsCompleted,
         String lastActiveDate,
         String gamificationData,
-        List<Long> savedEvents
+        List<Long> savedEvents,
+        Integer monthlyXP
 ) {}
