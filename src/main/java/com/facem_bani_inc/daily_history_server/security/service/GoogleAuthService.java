@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class GoogleAuthService {
     private final JwtUtils jwtUtils;
     private final AvatarService avatarService;
 
+    @Transactional
     public JwtResponse authenticate(String idTokenString) {
         GoogleIdToken idToken = verifyToken(idTokenString);
         GoogleIdToken.Payload payload = idToken.getPayload();

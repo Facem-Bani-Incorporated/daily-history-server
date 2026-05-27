@@ -8,13 +8,9 @@ import com.facem_bani_inc.daily_history_server.payload.response.JwtResponse;
 import com.facem_bani_inc.daily_history_server.repository.RoleRepository;
 import com.facem_bani_inc.daily_history_server.repository.UserRepository;
 import com.facem_bani_inc.daily_history_server.security.jwt.JwtUtils;
-import com.nimbusds.jose.JWSAlgorithm;
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
-import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashSet;
@@ -37,7 +34,7 @@ public class AppleAuthService {
 
     private static final String APPLE_ISSUER = "https://appleid.apple.com";
 
-    private final JWKSource<SecurityContext> appleJwkSource;
+    private final ConfigurableJWTProcessor<SecurityContext> appleJwtProcessor;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final JwtUtils jwtUtils;
@@ -45,6 +42,7 @@ public class AppleAuthService {
     @Value("${apple.bundle-id}")
     private String bundleId;
 
+    @Transactional
     public JwtResponse authenticate(String idTokenString, String fullName, String email) {
         JWTClaimsSet claims = verifyToken(idTokenString);
         String sub = claims.getSubject();
@@ -82,9 +80,7 @@ public class AppleAuthService {
 
     private JWTClaimsSet verifyToken(String idTokenString) {
         try {
-            ConfigurableJWTProcessor<SecurityContext> processor = new DefaultJWTProcessor<>();
-            processor.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.RS256, appleJwkSource));
-            JWTClaimsSet claims = processor.process(idTokenString, null);
+            JWTClaimsSet claims = appleJwtProcessor.process(idTokenString, null);
             String issuer = claims.getIssuer();
             if (!APPLE_ISSUER.equals(issuer)) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token issuer");

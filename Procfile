@@ -1,0 +1,1 @@
+web: java -Xmx192m -Xms96m -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=48m -Xss512k -XX:+UseSerialGC -XX:+ExitOnOutOfMemoryError -XX:TieredStopAtLevel=1 -jar target/daily-history-server-1.0-SNAPSHOT.jar

@@ -4,6 +4,7 @@ import com.facem_bani_inc.daily_history_server.security.service.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,31 +25,33 @@ public class JwtUtils {
     @Value("${server.jwtExpirationMs}")
     private int jwtExpirationMs;
 
+    private Key signingKey;
+    private JwtParser jwtParser;
+
+    @PostConstruct
+    private void init() {
+        this.signingKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        this.jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
+    }
+
     public String generateJwtToken(Authentication authentication) {
-
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
+        long now = System.currentTimeMillis();
         return Jwts.builder()
-                .setSubject((userPrincipal.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key(), SignatureAlgorithm.HS256)
+                .setSubject(userPrincipal.getUsername())
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + jwtExpirationMs))
+                .signWith(signingKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
-//    return Keys.hmacShaKeyFor(jwtSecret.getBytes());
-    }
-
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key()).build()
-                .parseClaimsJws(token).getBody().getSubject();
+        return jwtParser.parseClaimsJws(token).getBody().getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(key()).build().parse(authToken);
+            jwtParser.parse(authToken);
             return true;
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
@@ -59,7 +62,6 @@ public class JwtUtils {
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
         }
-
         return false;
     }
 }

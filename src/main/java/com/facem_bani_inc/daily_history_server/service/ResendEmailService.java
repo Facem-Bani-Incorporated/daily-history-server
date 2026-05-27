@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ResendEmailService {
 
+    private final Resend resend;
     private final ResendProperties resendProperties;
 
     public void sendEmail(String to, String subject, String html) throws ResendException {
-        Resend resend = new Resend(resendProperties.apiKey());
         CreateEmailOptions params = CreateEmailOptions.builder()
                 .from(resendProperties.fromEmail())
                 .to(to)

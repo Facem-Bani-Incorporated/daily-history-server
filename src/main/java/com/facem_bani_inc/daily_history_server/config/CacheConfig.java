@@ -36,7 +36,7 @@ public class CacheConfig {
                                 .build()),
                 new CaffeineCache(GAMIFICATION_BY_USER_ID,
                         Caffeine.newBuilder()
-                                .maximumSize(2000)
+                                .maximumSize(500)
                                 .expireAfterWrite(30, TimeUnit.MINUTES)
                                 .build()),
                 new CaffeineCache(LEADERBOARD,
