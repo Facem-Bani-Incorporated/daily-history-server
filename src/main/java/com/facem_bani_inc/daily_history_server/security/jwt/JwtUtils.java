@@ -23,7 +23,7 @@ public class JwtUtils {
     private String jwtSecret;
 
     @Value("${server.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    private long jwtExpirationMs;
 
     private Key signingKey;
     private JwtParser jwtParser;

@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping({"/current", "/me"})
+    @GetMapping("/me")
     public UserProfileDTO getCurrentUser() {
         User user = userService.getAuthenticatedUser();
         return new UserProfileDTO(user.getId(), user.getUsername(), user.getEmail(), user.getAvatarUrl(), user.isPro());
@@ -32,6 +32,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
         userService.syncProStatusFromRevenueCat(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteAccount(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        userService.deleteAccount(userDetails.getId());
         return ResponseEntity.noContent().build();
     }
 }

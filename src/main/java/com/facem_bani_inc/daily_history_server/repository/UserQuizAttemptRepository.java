@@ -2,6 +2,7 @@ package com.facem_bani_inc.daily_history_server.repository;
 
 import com.facem_bani_inc.daily_history_server.entity.UserQuizAttempt;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,4 +19,12 @@ public interface UserQuizAttemptRepository extends JpaRepository<UserQuizAttempt
 
     @Query("SELECT a FROM UserQuizAttempt a WHERE a.userId = :userId ORDER BY a.completedAt DESC")
     List<UserQuizAttempt> findAllByUserIdOrderByCompletedAtDesc(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("DELETE FROM UserQuizAnswer a WHERE a.attempt.id IN (SELECT t.id FROM UserQuizAttempt t WHERE t.userId = :userId)")
+    void deleteAnswersByUserId(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("DELETE FROM UserQuizAttempt a WHERE a.userId = :userId")
+    void deleteAttemptsByUserId(@Param("userId") Long userId);
 }

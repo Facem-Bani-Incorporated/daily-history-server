@@ -30,7 +30,7 @@ spring:
 server:
   port: ${PORT:8080}
   jwtSecret: ${SERVER_JWTSECRET}
-  jwtExpirationMs: ${SERVER_JWTEXPIRATIONMS:86400000}
+  jwtExpirationMs: ${SERVER_JWTEXPIRATIONMS:2592000000}
   pipelineSecret: ${PIPELINE_SECRET}
   tomcat:
     threads:
