@@ -25,6 +25,7 @@ import java.security.GeneralSecurityException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -54,8 +55,12 @@ public class GoogleAuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Google email is not verified");
         }
 
+        AtomicBoolean isNewUser = new AtomicBoolean(false);
         User user = userRepository.findByAuthProviderAndProviderUserId(EAuthProvider.GOOGLE, sub)
-                .orElseGet(() -> createUserFromGoogle(sub, email));
+                .orElseGet(() -> {
+                    isNewUser.set(true);
+                    return createUserFromGoogle(sub, email);
+                });
 
         String pictureUrl = (String) payload.get("picture");
         if ((user.getAvatarUrl() == null || user.getAvatarUrl().isBlank()) && pictureUrl != null && !pictureUrl.isBlank()) {
@@ -75,7 +80,7 @@ public class GoogleAuthService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        return new JwtResponse(
+        JwtResponse response = new JwtResponse(
                 jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -84,6 +89,8 @@ public class GoogleAuthService {
                 userDetails.isPro(),
                 roles
         );
+        response.setNewUser(isNewUser.get());
+        return response;
     }
 
     private GoogleIdToken verifyToken(String idTokenString) {

@@ -17,6 +17,7 @@ public class JwtResponse {
     private String avatarUrl;
     private boolean pro;
     private List<String> roles;
+    private boolean newUser = false;
 
     public JwtResponse(String accessToken, Long id, String username, String email, String avatarUrl, boolean pro, List<String> roles) {
         this.token = accessToken;

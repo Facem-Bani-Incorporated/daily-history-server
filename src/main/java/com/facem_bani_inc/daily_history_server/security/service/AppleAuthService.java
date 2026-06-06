@@ -55,8 +55,12 @@ public class AppleAuthService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Apple email is not verified");
         }
         String effectiveEmail = (email != null && !email.isBlank()) ? email : tokenEmail;
+        java.util.concurrent.atomic.AtomicBoolean isNewUser = new java.util.concurrent.atomic.AtomicBoolean(false);
         User user = userRepository.findByAuthProviderAndProviderUserId(EAuthProvider.APPLE, sub)
-                .orElseGet(() -> createUserFromApple(sub, effectiveEmail, fullName));
+                .orElseGet(() -> {
+                    isNewUser.set(true);
+                    return createUserFromApple(sub, effectiveEmail, fullName);
+                });
         UserDetailsImpl userDetails = UserDetailsImpl.build(user);
         Authentication authentication = new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities()
@@ -67,7 +71,7 @@ public class AppleAuthService {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        return new JwtResponse(
+        JwtResponse response = new JwtResponse(
                 jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
@@ -76,6 +80,8 @@ public class AppleAuthService {
                 userDetails.isPro(),
                 roles
         );
+        response.setNewUser(isNewUser.get());
+        return response;
     }
 
     private JWTClaimsSet verifyToken(String idTokenString) {
