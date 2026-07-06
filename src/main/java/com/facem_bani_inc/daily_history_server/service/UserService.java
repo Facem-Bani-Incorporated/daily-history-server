@@ -2,6 +2,7 @@ package com.facem_bani_inc.daily_history_server.service;
 
 import com.facem_bani_inc.daily_history_server.entity.User;
 import com.facem_bani_inc.daily_history_server.model.enums.EAuthProvider;
+import com.facem_bani_inc.daily_history_server.repository.FriendshipRepository;
 import com.facem_bani_inc.daily_history_server.repository.SupportMessageRepository;
 import com.facem_bani_inc.daily_history_server.repository.UserGamificationRepository;
 import com.facem_bani_inc.daily_history_server.repository.UserQuizAttemptRepository;
@@ -26,6 +27,7 @@ public class UserService {
     private final UserGamificationRepository userGamificationRepository;
     private final UserQuizAttemptRepository userQuizAttemptRepository;
     private final SupportMessageRepository supportMessageRepository;
+    private final FriendshipRepository friendshipRepository;
     private final RevenueCatService revenueCatService;
     private final AvatarService avatarService;
 
@@ -57,6 +59,7 @@ public class UserService {
         String providerUserId = user.getProviderUserId();
         userQuizAttemptRepository.deleteAnswersByUserId(userId);
         userQuizAttemptRepository.deleteAttemptsByUserId(userId);
+        friendshipRepository.deleteAllByUserId(userId);
         userGamificationRepository.findByUserId(userId)
                 .ifPresent(userGamificationRepository::delete);
         supportMessageRepository.deleteAllByUserId(userId);
