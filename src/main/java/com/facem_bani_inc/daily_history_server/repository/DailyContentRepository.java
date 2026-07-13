@@ -21,6 +21,8 @@ public interface DailyContentRepository extends JpaRepository<DailyContent, Long
            LEFT JOIN FETCH dc.events e
            LEFT JOIN FETCH e.titleTranslations
            LEFT JOIN FETCH e.narrativeTranslations
+           LEFT JOIN FETCH e.notificationTitleTranslations
+           LEFT JOIN FETCH e.notificationBodyTranslations
            WHERE dc.dateProcessed = :date
            """)
     Optional<DailyContent> findByDateProcessedWithEvents(LocalDate date);
@@ -31,6 +33,8 @@ public interface DailyContentRepository extends JpaRepository<DailyContent, Long
            LEFT JOIN FETCH dc.events e
            LEFT JOIN FETCH e.titleTranslations
            LEFT JOIN FETCH e.narrativeTranslations
+           LEFT JOIN FETCH e.notificationTitleTranslations
+           LEFT JOIN FETCH e.notificationBodyTranslations
            WHERE dc.dateProcessed = :date AND e.pro = true
            """)
     Optional<DailyContent> findByDateProcessedWithProEvents(LocalDate date);
@@ -40,6 +44,8 @@ public interface DailyContentRepository extends JpaRepository<DailyContent, Long
            FROM Event e
            JOIN FETCH e.titleTranslations
            JOIN FETCH e.narrativeTranslations
+           LEFT JOIN FETCH e.notificationTitleTranslations
+           LEFT JOIN FETCH e.notificationBodyTranslations
            WHERE e.dailyContent.dateProcessed = :date AND e.pro = false
            ORDER BY e.impactScore DESC
            LIMIT 2

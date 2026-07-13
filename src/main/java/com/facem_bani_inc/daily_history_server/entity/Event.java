@@ -33,6 +33,17 @@ public class Event {
     @JoinColumn(name = "narrative_translations_id", nullable = false, unique = true)
     private Translation narrativeTranslations;
 
+    // Per-language push-notification hook (TikTok style). Nullable: historical events and
+    // refresh-mode filler events may not carry one — the app then falls back to its own
+    // client-side notification template.
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "notification_title_translations_id", unique = true)
+    private Translation notificationTitleTranslations;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "notification_body_translations_id", unique = true)
+    private Translation notificationBodyTranslations;
+
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 

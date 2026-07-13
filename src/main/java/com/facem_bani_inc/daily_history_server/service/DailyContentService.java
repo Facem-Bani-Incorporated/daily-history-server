@@ -85,6 +85,8 @@ public class DailyContentService {
             event.setCategory(eventDTO.category());
             event.setTitleTranslations(toTranslationEntity(eventDTO.titleTranslations()));
             event.setNarrativeTranslations(toTranslationEntity(eventDTO.narrativeTranslations()));
+            event.setNotificationTitleTranslations(toNotificationTranslationEntity(eventDTO.notificationTitleTranslations()));
+            event.setNotificationBodyTranslations(toNotificationTranslationEntity(eventDTO.notificationBodyTranslations()));
             event.setEventDate(eventDTO.eventDate());
             event.setImpactScore(eventDTO.impactScore());
             event.setSourceUrl(eventDTO.sourceUrl());
@@ -142,6 +144,33 @@ public class DailyContentService {
         return translation;
     }
 
+    /**
+     * Notification translations are optional. Skip creating a row when the DTO is null
+     * or every language is blank — the column stays null and the app falls back to its
+     * own client-side notification hook, avoiding junk empty translation rows.
+     */
+    private Translation toNotificationTranslationEntity(TranslationDTO dto) {
+        if (dto == null) return null;
+        boolean allBlank = isBlank(dto.en()) && isBlank(dto.ro()) && isBlank(dto.es())
+                && isBlank(dto.de()) && isBlank(dto.fr());
+        if (allBlank) return null;
+        Translation translation = new Translation();
+        translation.setEn(nullToEmpty(dto.en()));
+        translation.setRo(nullToEmpty(dto.ro()));
+        translation.setEs(nullToEmpty(dto.es()));
+        translation.setDe(nullToEmpty(dto.de()));
+        translation.setFr(nullToEmpty(dto.fr()));
+        return translation;
+    }
+
+    private static boolean isBlank(String s) {
+        return s == null || s.isBlank();
+    }
+
+    private static String nullToEmpty(String s) {
+        return s == null ? "" : s;
+    }
+
     private DailyContentDTO dailyContentToDto(DailyContent dailyContent) {
         List<EventDTO> eventDtos = new ArrayList<>();
         if (dailyContent.getEvents() != null) {
@@ -162,12 +191,18 @@ public class DailyContentService {
         );
     }
 
+    private TranslationDTO toTranslationDtoOrNull(Translation translation) {
+        return translation == null ? null : toTranslationDto(translation);
+    }
+
     private EventDTO toEventDto(Event event) {
         return new EventDTO(
                 event.getId(),
                 event.getCategory(),
                 toTranslationDto(event.getTitleTranslations()),
                 toTranslationDto(event.getNarrativeTranslations()),
+                toTranslationDtoOrNull(event.getNotificationTitleTranslations()),
+                toTranslationDtoOrNull(event.getNotificationBodyTranslations()),
                 event.getEventDate(),
                 event.getImpactScore(),
                 event.getSourceUrl(),

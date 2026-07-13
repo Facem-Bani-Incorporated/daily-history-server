@@ -12,6 +12,8 @@ public record EventDTO(
         ECategory category,
         TranslationDTO titleTranslations,
         TranslationDTO narrativeTranslations,
+        TranslationDTO notificationTitleTranslations,
+        TranslationDTO notificationBodyTranslations,
         LocalDate eventDate,
         Double impactScore,
         String sourceUrl,
