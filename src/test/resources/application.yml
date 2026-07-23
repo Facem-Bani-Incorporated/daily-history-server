@@ -38,7 +38,10 @@ spring:
 
 server:
   port: 0
-  jwtSecret: test-jwt-secret
+  # Must be valid base64 of at least 32 bytes: JwtUtils base64-decodes this into
+  # an HS256 key at startup. A plain string like "test-jwt-secret" fails to decode
+  # and takes the whole application context down with it.
+  jwtSecret: QtGwqgVXiCrPT3nW7uFFIiyAZ4XP4eby7ZfZaNXUC/s=
   jwtExpirationMs: 86400000
   pipelineSecret: test-pipeline-secret
 

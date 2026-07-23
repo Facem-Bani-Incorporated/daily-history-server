@@ -34,6 +34,13 @@ public class CacheConfig {
                                 .maximumSize(20)
                                 .expireAfterWrite(24, TimeUnit.HOURS)
                                 .build()),
+                // One list of every archive date. Rebuilt hourly so a freshly
+                // published day becomes visible to the public site without a restart.
+                new CaffeineCache(GUEST_CONTENT_DATES,
+                        Caffeine.newBuilder()
+                                .maximumSize(1)
+                                .expireAfterWrite(1, TimeUnit.HOURS)
+                                .build()),
                 new CaffeineCache(GAMIFICATION_BY_USER_ID,
                         Caffeine.newBuilder()
                                 .maximumSize(500)

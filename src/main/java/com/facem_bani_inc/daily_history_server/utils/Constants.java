@@ -7,6 +7,7 @@ public final class Constants {
     public static final String GAMIFICATION_BY_USER_ID = "gamificationByUserId";
     public static final String LEADERBOARD = "leaderboard";
     public static final String GUEST_TOP_EVENT = "guestTopEvent";
+    public static final String GUEST_CONTENT_DATES = "guestContentDates";
     public static final String QUIZ_BY_EVENT_ID = "quizByEventId";
 
     // Quiz reward: 100 XP per correct answer, plus a 500 XP bonus for a perfect run.

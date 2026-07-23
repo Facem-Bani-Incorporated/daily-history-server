@@ -51,4 +51,18 @@ public interface DailyContentRepository extends JpaRepository<DailyContent, Long
            LIMIT 2
            """)
     List<Event> findTopTwoFreeEventsByDate(LocalDate date);
+
+    /**
+     * Dates that actually have guest-visible (free) content, newest first.
+     * The public site walks this to know which archive pages it can build,
+     * instead of probing date by date.
+     */
+    @Query("""
+           SELECT DISTINCT dc.dateProcessed
+           FROM DailyContent dc
+           JOIN dc.events e
+           WHERE e.pro = false AND dc.dateProcessed <= :maxDate
+           ORDER BY dc.dateProcessed DESC
+           """)
+    List<LocalDate> findGuestContentDates(LocalDate maxDate);
 }

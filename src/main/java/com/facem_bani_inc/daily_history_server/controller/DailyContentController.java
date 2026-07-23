@@ -48,4 +48,26 @@ public class DailyContentController {
     public List<EventDTO> getGuestTopEvents() {
         return dailyContentService.getGuestTopEvents(LocalDate.now());
     }
+
+    /**
+     * Archive access for the public website, which renders one static page per
+     * day per language. Same payload as /guest, for an arbitrary past date.
+     */
+    @GetMapping("/guest/by-date")
+    public List<EventDTO> getGuestTopEventsByDate(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        // Content is scheduled ahead of publication, so a future date would hand
+        // out stories before their day. Treat it as absent rather than as an error
+        // the caller could distinguish from "not written yet".
+        if (date.isAfter(LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "No content available for date: " + date);
+        }
+        return dailyContentService.getGuestTopEvents(date);
+    }
+
+    /** Dates that have guest-visible content, newest first. */
+    @GetMapping("/guest/dates")
+    public List<LocalDate> getGuestContentDates() {
+        return dailyContentService.getGuestContentDates();
+    }
 }

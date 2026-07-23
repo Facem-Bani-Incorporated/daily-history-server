@@ -34,6 +34,7 @@ public class DailyContentService {
             @CacheEvict(cacheNames = DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = PRO_DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = GUEST_TOP_EVENT, key = "#dailyContentDTO.dateProcessed()"),
+            @CacheEvict(cacheNames = GUEST_CONTENT_DATES, allEntries = true),
             @CacheEvict(cacheNames = QUIZ_BY_EVENT_ID, allEntries = true)
     })
     public DailyContent upsertDailyContent(DailyContentDTO dailyContentDTO) {
@@ -75,6 +76,17 @@ public class DailyContentService {
             throw new ResponseStatusException(NOT_FOUND, "No content available for date: " + date);
         }
         return events.stream().map(this::toEventDto).toList();
+    }
+
+    /**
+     * Dates with guest-visible content, newest first. Consumed by the public
+     * website to enumerate the archive it can build. Future dates are excluded
+     * so scheduled-but-unpublished content never leaks.
+     */
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = GUEST_CONTENT_DATES)
+    public List<LocalDate> getGuestContentDates() {
+        return dailyContentRepository.findGuestContentDates(LocalDate.now());
     }
 
     private void populateDailyContentFromDto(DailyContent dailyContent, DailyContentDTO dailyContentDTO) {
