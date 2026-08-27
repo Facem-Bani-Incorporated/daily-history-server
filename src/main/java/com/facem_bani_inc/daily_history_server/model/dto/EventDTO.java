@@ -21,6 +21,13 @@ public record EventDTO(
         boolean isPro,
         String location,
         List<String> gallery,
-        Map<String, List<QuizQuestionInputDTO>> quiz
+        Map<String, List<QuizQuestionInputDTO>> quiz,
+
+        // "The Long Read". `deepDive` is null on every response to a free user — the
+        // full article is PRO-only. `deepDiveTeaser` always travels: chapter titles and
+        // word count are the pitch. Both are JSON strings keyed by language, passed
+        // through to the client untouched.
+        String deepDive,
+        String deepDiveTeaser
 ) {
 }

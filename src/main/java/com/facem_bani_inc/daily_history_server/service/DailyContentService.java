@@ -59,6 +59,23 @@ public class DailyContentService {
         return dailyContentToDto(dailyContent);
     }
 
+    /**
+     * The whole day — free and PRO events — with the long read included.
+     * <p>
+     * Callers MUST have verified the requester holds an active PRO entitlement before
+     * calling this. It has its own cache region for that reason: {@code DAILY_CONTENT_BY_DATE}
+     * is keyed on date alone, so populating it from a subscriber's request would serve
+     * the full article to every free user asking for the same day.
+     */
+    @Transactional(readOnly = true)
+    @Cacheable(cacheNames = FULL_DAILY_CONTENT_BY_DATE, key = "#date")
+    public DailyContentDTO getFullDailyContentByDate(LocalDate date) {
+        DailyContent dailyContent = dailyContentRepository.findByDateProcessedWithEvents(date)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "DailyContent not found for date: " + date));
+
+        return dailyContentToDto(dailyContent, true);
+    }
+
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = PRO_DAILY_CONTENT_BY_DATE, key = "#date")
     public DailyContentDTO getProDailyContentByDate(LocalDate date) {
@@ -105,6 +122,10 @@ public class DailyContentService {
             event.setPageViews30d(eventDTO.pageViews30d());
             event.setPro(eventDTO.isPro());
             event.setLocation(eventDTO.location());
+            // The pipeline sends the long read back on refresh-mode filler events, so a
+            // null here means "not generated", never "clear what's stored".
+            event.setDeepDive(eventDTO.deepDive());
+            event.setDeepDiveTeaser(eventDTO.deepDiveTeaser());
             event.setGallery(eventDTO.gallery() != null ? new ArrayList<>(eventDTO.gallery()) : new ArrayList<>());
             event.setDailyContent(dailyContent);
 
@@ -184,10 +205,14 @@ public class DailyContentService {
     }
 
     private DailyContentDTO dailyContentToDto(DailyContent dailyContent) {
+        return dailyContentToDto(dailyContent, false);
+    }
+
+    private DailyContentDTO dailyContentToDto(DailyContent dailyContent, boolean includeDeepDive) {
         List<EventDTO> eventDtos = new ArrayList<>();
         if (dailyContent.getEvents() != null) {
             for (Event event : dailyContent.getEvents()) {
-                eventDtos.add(toEventDto(event));
+                eventDtos.add(toEventDto(event, includeDeepDive));
             }
         }
         return new DailyContentDTO(dailyContent.getDateProcessed(), eventDtos);
@@ -207,7 +232,20 @@ public class DailyContentService {
         return translation == null ? null : toTranslationDto(translation);
     }
 
+    /**
+     * Map an event for a response that must NOT carry the long read.
+     * Every caller that serves free or unauthenticated users lands here.
+     */
     private EventDTO toEventDto(Event event) {
+        return toEventDto(event, false);
+    }
+
+    /**
+     * @param includeDeepDive true only when the caller has already established the
+     *                        requester holds an active PRO entitlement. The teaser
+     *                        travels either way — it is the pitch, not the content.
+     */
+    private EventDTO toEventDto(Event event, boolean includeDeepDive) {
         return new EventDTO(
                 event.getId(),
                 event.getCategory(),
@@ -222,7 +260,9 @@ public class DailyContentService {
                 event.isPro(),
                 event.getLocation(),
                 event.getGallery() != null ? new ArrayList<>(event.getGallery()) : new ArrayList<>(),
-                null
+                null,
+                includeDeepDive ? event.getDeepDive() : null,
+                event.getDeepDiveTeaser()
         );
     }
 }

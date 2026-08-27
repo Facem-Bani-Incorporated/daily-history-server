@@ -44,6 +44,16 @@ public class Event {
     @JoinColumn(name = "notification_body_translations_id", unique = true)
     private Translation notificationBodyTranslations;
 
+    // "The Long Read" — the long-form PRO narrative, as a JSON object keyed by language.
+    // Never included in a response to a free user; see DailyContentService#toEventDto.
+    @Column(name = "deep_dive", columnDefinition = "text")
+    private String deepDive;
+
+    // Opening words, chapter titles and word count, keyed by language. Sent to everyone:
+    // it is the paywall pitch, not the content.
+    @Column(name = "deep_dive_teaser", columnDefinition = "text")
+    private String deepDiveTeaser;
+
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 

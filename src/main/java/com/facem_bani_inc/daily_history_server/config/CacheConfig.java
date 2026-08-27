@@ -29,6 +29,13 @@ public class CacheConfig {
                                 .maximumSize(20)
                                 .expireAfterWrite(24, TimeUnit.HOURS)
                                 .build()),
+                // Full days including the long read. Smaller ceiling than the free
+                // region because each entry carries roughly five times the text.
+                new CaffeineCache(FULL_DAILY_CONTENT_BY_DATE,
+                        Caffeine.newBuilder()
+                                .maximumSize(10)
+                                .expireAfterWrite(24, TimeUnit.HOURS)
+                                .build()),
                 new CaffeineCache(GUEST_TOP_EVENT,
                         Caffeine.newBuilder()
                                 .maximumSize(20)

@@ -34,6 +34,21 @@ public class DailyContentController {
         return dailyContentService.getDailyContentByDate(date);
     }
 
+    /**
+     * Same day as {@code /by-date}, but with "The Long Read" filled in on every event.
+     * The mobile client calls this instead of {@code /by-date} when the user holds the
+     * PRO entitlement; the full article never travels on any other route.
+     */
+    @GetMapping(value = "/full/by-date")
+    public DailyContentDTO getFullDailyContent(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (userDetails == null || !userDetails.isPro()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Pro subscription required");
+        }
+        return dailyContentService.getFullDailyContentByDate(date);
+    }
+
     @GetMapping(value = "/pro/by-date")
     public DailyContentDTO getProDailyContent(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
