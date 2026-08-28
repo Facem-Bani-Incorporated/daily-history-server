@@ -88,7 +88,7 @@ public class DailyContentService {
     @Transactional(readOnly = true)
     @Cacheable(cacheNames = GUEST_TOP_EVENT, key = "#date")
     public List<EventDTO> getGuestTopEvents(LocalDate date) {
-        List<Event> events = dailyContentRepository.findTopTwoFreeEventsByDate(date);
+        List<Event> events = dailyContentRepository.findFreeEventsByDate(date);
         if (events.isEmpty()) {
             throw new ResponseStatusException(NOT_FOUND, "No content available for date: " + date);
         }

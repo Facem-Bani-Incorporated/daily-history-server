@@ -48,9 +48,8 @@ public interface DailyContentRepository extends JpaRepository<DailyContent, Long
            LEFT JOIN FETCH e.notificationBodyTranslations
            WHERE e.dailyContent.dateProcessed = :date AND e.pro = false
            ORDER BY e.impactScore DESC
-           LIMIT 2
            """)
-    List<Event> findTopTwoFreeEventsByDate(LocalDate date);
+    List<Event> findFreeEventsByDate(LocalDate date);
 
     /**
      * Dates that actually have guest-visible (free) content, newest first.
