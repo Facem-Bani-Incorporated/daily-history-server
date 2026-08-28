@@ -54,6 +54,11 @@ public class Event {
     @Column(name = "deep_dive_teaser", columnDefinition = "text")
     private String deepDiveTeaser;
 
+    // "Parallel Universes" — the branching what-if game, as a JSON object keyed by
+    // language. Null on most events: only the day's hero events get one.
+    @Column(name = "parallel_universe", columnDefinition = "text")
+    private String parallelUniverse;
+
     @Column(name = "event_date", nullable = false)
     private LocalDate eventDate;
 

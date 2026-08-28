@@ -126,6 +126,7 @@ public class DailyContentService {
             // null here means "not generated", never "clear what's stored".
             event.setDeepDive(eventDTO.deepDive());
             event.setDeepDiveTeaser(eventDTO.deepDiveTeaser());
+            event.setParallelUniverse(eventDTO.parallelUniverse());
             event.setGallery(eventDTO.gallery() != null ? new ArrayList<>(eventDTO.gallery()) : new ArrayList<>());
             event.setDailyContent(dailyContent);
 
@@ -262,7 +263,8 @@ public class DailyContentService {
                 event.getGallery() != null ? new ArrayList<>(event.getGallery()) : new ArrayList<>(),
                 null,
                 includeDeepDive ? event.getDeepDive() : null,
-                event.getDeepDiveTeaser()
+                event.getDeepDiveTeaser(),
+                event.getParallelUniverse()
         );
     }
 }

@@ -28,6 +28,9 @@ public record EventDTO(
         // word count are the pitch. Both are JSON strings keyed by language, passed
         // through to the client untouched.
         String deepDive,
-        String deepDiveTeaser
+        String deepDiveTeaser,
+
+        // The branching what-if game. Travels to everyone — the client gates it.
+        String parallelUniverse
 ) {
 }
