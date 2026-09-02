@@ -28,6 +28,13 @@ spring:
 
 
 server:
+  # The daily-content responses are ~400 KB of JSON each and were going out
+  # uncompressed: the client fetches four days before it can paint, so a phone was
+  # pulling ~1.6 MB before showing a single story. JSON gzips to roughly a tenth.
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/plain
+    min-response-size: 1024
   port: ${PORT:8080}
   jwtSecret: ${SERVER_JWTSECRET}
   jwtExpirationMs: ${SERVER_JWTEXPIRATIONMS:2592000000}
