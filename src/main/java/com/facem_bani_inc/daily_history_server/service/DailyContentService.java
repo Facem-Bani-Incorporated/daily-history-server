@@ -32,6 +32,12 @@ public class DailyContentService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(cacheNames = DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
+            // The one the PRO app actually reads, and the one this list was missing.
+            // A re-run rewrote the database and every other region was invalidated, so
+            // free users saw the new day immediately while subscribers kept being served
+            // the first version for the full 24 hour TTL. Three pipeline runs in a row
+            // looked like they had changed nothing.
+            @CacheEvict(cacheNames = FULL_DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = PRO_DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = GUEST_TOP_EVENT, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = GUEST_CONTENT_DATES, allEntries = true),
