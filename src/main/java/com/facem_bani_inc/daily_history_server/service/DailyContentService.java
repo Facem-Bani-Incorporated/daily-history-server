@@ -32,6 +32,7 @@ public class DailyContentService {
     @Transactional
     @Caching(evict = {
             @CacheEvict(cacheNames = DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
+            @CacheEvict(cacheNames = FULL_DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = PRO_DAILY_CONTENT_BY_DATE, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = GUEST_TOP_EVENT, key = "#dailyContentDTO.dateProcessed()"),
             @CacheEvict(cacheNames = GUEST_CONTENT_DATES, allEntries = true),

@@ -34,3 +34,6 @@ build/
 
 # Local secrets / profile files
 src/main/resources/application-local.yml
+
+# Local working-notes context (not committed)
+CONTEXT.md
