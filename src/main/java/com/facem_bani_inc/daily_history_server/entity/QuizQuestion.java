@@ -12,8 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "quiz_questions",
-        indexes = @Index(name = "idx_quiz_lang", columnList = "quiz_id, language"))
+@Table(name = "quiz_questions")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -26,36 +26,27 @@ public class Event {
     private ECategory category;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "title_translations_id", nullable = false, unique = true)
+    @JoinColumn(name = "title_translations_id", nullable = false)
     private Translation titleTranslations;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "narrative_translations_id", nullable = false, unique = true)
+    @JoinColumn(name = "narrative_translations_id", nullable = false)
     private Translation narrativeTranslations;
 
-    // Per-language push-notification hook (TikTok style). Nullable: historical events and
-    // refresh-mode filler events may not carry one — the app then falls back to its own
-    // client-side notification template.
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "notification_title_translations_id", unique = true)
+    @JoinColumn(name = "notification_title_translations_id")
     private Translation notificationTitleTranslations;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "notification_body_translations_id", unique = true)
+    @JoinColumn(name = "notification_body_translations_id")
     private Translation notificationBodyTranslations;
 
-    // "The Long Read" — the long-form PRO narrative, as a JSON object keyed by language.
-    // Never included in a response to a free user; see DailyContentService#toEventDto.
     @Column(name = "deep_dive", columnDefinition = "text")
     private String deepDive;
 
-    // Opening words, chapter titles and word count, keyed by language. Sent to everyone:
-    // it is the paywall pitch, not the content.
     @Column(name = "deep_dive_teaser", columnDefinition = "text")
     private String deepDiveTeaser;
 
-    // "Parallel Universes" — the branching what-if game, as a JSON object keyed by
-    // language. Null on most events: only the day's hero events get one.
     @Column(name = "parallel_universe", columnDefinition = "text")
     private String parallelUniverse;
 

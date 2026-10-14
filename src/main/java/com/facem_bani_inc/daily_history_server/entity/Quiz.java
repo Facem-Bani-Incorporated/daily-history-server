@@ -21,7 +21,7 @@ public class Quiz {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false, unique = true)
+    @JoinColumn(name = "event_id", nullable = false)
     @ToString.Exclude
     private Event event;
 

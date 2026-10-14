@@ -11,8 +11,7 @@ import java.time.LocalDateTime;
 import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
-@Table(name = "friendships",
-        uniqueConstraints = @UniqueConstraint(name = "uq_friendship_pair", columnNames = {"requester_id", "addressee_id"}))
+@Table(name = "friendships")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

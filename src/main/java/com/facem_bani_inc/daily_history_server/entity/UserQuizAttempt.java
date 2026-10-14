@@ -10,12 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "user_quiz_attempts",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uq_user_event_quiz",
-                columnNames = {"user_id", "event_id"}
-        ),
-        indexes = @Index(name = "idx_attempts_user", columnList = "user_id"))
+@Table(name = "user_quiz_attempts")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
