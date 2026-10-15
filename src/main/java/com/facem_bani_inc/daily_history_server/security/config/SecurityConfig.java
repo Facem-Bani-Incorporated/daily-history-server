@@ -3,6 +3,7 @@ package com.facem_bani_inc.daily_history_server.security.config;
 import com.facem_bani_inc.daily_history_server.security.jwt.AuthEntryPointJwt;
 import com.facem_bani_inc.daily_history_server.security.jwt.AuthTokenFilter;
 import com.facem_bani_inc.daily_history_server.security.jwt.PipelineHmacAuthFilter;
+import com.facem_bani_inc.daily_history_server.security.ratelimit.RateLimitFilter;
 import com.facem_bani_inc.daily_history_server.security.service.UserDetailsServiceImpl;
 import jakarta.servlet.DispatcherType;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,11 @@ public class SecurityConfig {
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
+    }
+
+    @Bean
+    public RateLimitFilter rateLimitFilter() {
+        return new RateLimitFilter();
     }
 
     @Bean
@@ -86,6 +92,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
+                .addFilterBefore(rateLimitFilter(), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new PipelineHmacAuthFilter(pipelineSecret, 300), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 
