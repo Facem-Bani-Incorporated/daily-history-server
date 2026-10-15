@@ -57,7 +57,6 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found: " + userId));
         EAuthProvider provider = user.getAuthProvider();
         String providerUserId = user.getProviderUserId();
-        userQuizAttemptRepository.deleteAnswersByUserId(userId);
         userQuizAttemptRepository.deleteAttemptsByUserId(userId);
         friendshipRepository.deleteAllByUserId(userId);
         userGamificationRepository.findByUserId(userId)

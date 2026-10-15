@@ -71,3 +71,6 @@ resend:
 revenuecat:
   secret-key: ${REVENUECAT_SECRET_KEY}
   webhook-auth-header: ${REVENUECAT_WEBHOOK_AUTH_HEADER}
+
+quiz-attempt-purge-job:
+  cron: 0 0 3 * * *

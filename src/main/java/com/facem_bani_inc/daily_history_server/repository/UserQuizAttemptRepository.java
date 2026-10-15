@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +22,10 @@ public interface UserQuizAttemptRepository extends JpaRepository<UserQuizAttempt
     List<UserQuizAttempt> findAllByUserIdOrderByCompletedAtDesc(@Param("userId") Long userId);
 
     @Modifying
-    @Query("DELETE FROM UserQuizAnswer a WHERE a.attempt.id IN (SELECT t.id FROM UserQuizAttempt t WHERE t.userId = :userId)")
-    void deleteAnswersByUserId(@Param("userId") Long userId);
-
-    @Modifying
     @Query("DELETE FROM UserQuizAttempt a WHERE a.userId = :userId")
     void deleteAttemptsByUserId(@Param("userId") Long userId);
+
+    @Modifying
+    @Query("DELETE FROM UserQuizAttempt a WHERE a.completedAt < :cutoff")
+    int deleteAttemptsCompletedBefore(@Param("cutoff") LocalDateTime cutoff);
 }
